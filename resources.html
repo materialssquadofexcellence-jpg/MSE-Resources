@@ -7,17 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .active-tab { color: #2563eb; border-top: 3px solid #2563eb; }
+        .active-tab { color: #2563eb; border-bottom: 3px solid #2563eb; transition: all 0.2s; }
         body { -webkit-tap-highlight-color: transparent; }
     </style>
-<link rel="icon" href="data:,">
 </head>
 <body class="bg-slate-50 pb-24">
 
     <header class="bg-white p-5 sticky top-0 z-50 shadow-sm">
         <h1 id="pageTitle" class="text-2xl font-bold text-slate-800">Books</h1>
         <div class="mt-3 relative">
-            <input type="text" id="searchInput" oninput="filterData()" placeholder="Search resources..." 
+            <input type="text" id="searchInput" oninput="filterData()" placeholder="Search in this category..." 
                    class="w-full bg-slate-100 border-none rounded-xl py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none">
             <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-400 w-5 h-5"></i>
         </div>
@@ -27,71 +26,79 @@
         <div class="text-center py-20 text-slate-400">Loading Resources...</div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center text-slate-400 z-50">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center text-slate-400 z-50 overflow-x-auto">
         <button onclick="switchTab('Books')" class="nav-btn p-4 flex flex-col items-center gap-1 active-tab" id="tab-Books">
-            <i data-lucide="book-open" class="w-6 h-6"></i><span class="text-[10px] font-bold">BOOKS</span>
+            <i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold">BOOKS</span>
         </button>
         <button onclick="switchTab('Questions')" class="nav-btn p-4 flex flex-col items-center gap-1" id="tab-Questions">
-            <i data-lucide="help-circle" class="w-6 h-6"></i><span class="text-[10px] font-bold">QUESTIONS</span>
+            <i data-lucide="help-circle" class="w-5 h-5"></i><span class="text-[9px] font-bold">QUESTIONS</span>
         </button>
         <button onclick="switchTab('Notes')" class="nav-btn p-4 flex flex-col items-center gap-1" id="tab-Notes">
-            <i data-lucide="file-text" class="w-6 h-6"></i><span class="text-[10px] font-bold">NOTES</span>
+            <i data-lucide="file-text" class="w-5 h-5"></i><span class="text-[9px] font-bold">NOTES</span>
         </button>
         <button onclick="switchTab('Teachers')" class="nav-btn p-4 flex flex-col items-center gap-1" id="tab-Teachers">
-            <i data-lucide="graduation-cap" class="w-6 h-6"></i><span class="text-[10px] font-bold">FACULTY</span>
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i><span class="text-[9px] font-bold">FACULTY</span>
         </button>
         <button onclick="switchTab('Important_Links')" class="nav-btn p-4 flex flex-col items-center gap-1" id="tab-Important_Links">
-            <i data-lucide="link" class="w-6 h-6"></i><span class="text-[10px] font-bold">LINKS</span>
+            <i data-lucide="link" class="w-5 h-5"></i><span class="text-[9px] font-bold">LINKS</span>
         </button>
     </nav>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwQRTviA3_usXqBebpfnqsgSdo-d2WL4Sgp10LrxXRz-ivoP6NFp6_RFw3Rf_MNmNOy4g/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbyYKtJfcITcM_lXn_SKmpdgknGbUPnxQiIKcqDrnYq-hhZTOexpg8fXvctkMJD6gPYXzQ/exec"; // <--- ENSURE THIS IS THE NEW DEPLOYMENT URL
         let currentData = [];
         let currentTab = 'Books';
 
         async function switchTab(tabName) {
             currentTab = tabName;
             document.getElementById('pageTitle').innerText = tabName.replace('_', ' ');
-            
-            // UI Update: Active States
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
             document.getElementById(`tab-${tabName}`).classList.add('active-tab');
-
             document.getElementById('contentList').innerHTML = `<div class="text-center py-20">Loading ${tabName}...</div>`;
+            document.getElementById('searchInput').value = ""; // Clear search when switching tabs
 
             try {
                 const response = await fetch(`${API_URL}?tab=${tabName}`);
                 currentData = await response.json();
+                console.log("Data Received:", currentData); // DEBUG: Look at your console (F12) to see columns
                 renderData(currentData);
             } catch (e) {
-                document.getElementById('contentList').innerHTML = `<div class="text-red-500 text-center">Failed to load.</div>`;
+                document.getElementById('contentList').innerHTML = `<div class="text-red-500 text-center p-10">Connection Error. Check API URL.</div>`;
             }
         }
 
         function renderData(data) {
             const list = document.getElementById('contentList');
-            if (data.length === 0) { list.innerHTML = `<p class="text-center text-slate-400">No entries found.</p>`; return; }
+            if (!data || data.length === 0) { 
+                list.innerHTML = `<p class="text-center text-slate-400 py-10">No items found in this category.</p>`; 
+                return; 
+            }
 
             list.innerHTML = data.map(item => {
-                if (currentTab === 'Books') return card(item.BookName, `By ${item.Writer}`, `Rec for: ${item.RecommendedFor}`, item.DriveLink, 'book');
-                if (currentTab === 'Questions') return card(`${item.Year} - ${item.Topic}`, `${item.Chapter}`, `Mark: ${item.Mark} | ${item.Teacher}`, '#', 'help-circle');
-                if (currentTab === 'Notes') return card(item.Chapter, `Writer: ${item.Writer}`, `Teacher: ${item.Teacher}`, item.DriveLink, 'file-text');
-                if (currentTab === 'Teachers') return card(item.Name, item.Role, `${item.ResearchField}`, `mailto:${item.Email}`, 'user');
-                if (currentTab === 'Important_Links') return card(item.Title, item.Description, item.Link, item.Link, 'external-link');
+                // Find keys regardless of exact casing/spaces
+                const getVal = (key) => {
+                    const foundKey = Object.keys(item).find(k => k.toLowerCase().replace(/\s/g, '') === key.toLowerCase());
+                    return foundKey ? item[foundKey] : "";
+                };
+
+                if (currentTab === 'Books') return card(getVal('BookName'), `By ${getVal('Writer')}`, `Rec For: ${getVal('RecommendedFor')}`, getVal('DriveLink'), 'book');
+                if (currentTab === 'Questions') return card(`${getVal('Year')} - ${getVal('Topic')}`, `Chapter: ${getVal('Chapter')}`, `Teacher: ${getVal('Teacher')} (${getVal('Mark')} Marks)`, '#', 'help-circle');
+                if (currentTab === 'Notes') return card(getVal('Chapter'), `By ${getVal('Writer')}`, `Teacher: ${getVal('Teacher')}`, getVal('DriveLink'), 'file-text');
+                if (currentTab === 'Teachers') return card(getVal('Name'), getVal('Role'), `${getVal('ResearchField')} | ${getVal('Study')}`, `mailto:${getVal('Email')}`, 'user');
+                if (currentTab === 'Important_Links') return card(getVal('Title'), getVal('Description'), "Visit Link", getVal('Link'), 'external-link');
             }).join('');
             lucide.createIcons();
         }
 
         function card(title, sub, detail, link, icon) {
             return `
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-start gap-4">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="${icon}"></i></div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-slate-900">${title}</h3>
-                    <p class="text-slate-500 text-sm">${sub}</p>
-                    <p class="text-slate-400 text-xs mt-1">${detail}</p>
-                    ${link && link !== '#' ? `<a href="${link}" target="_blank" class="inline-block mt-3 text-blue-600 text-sm font-bold">Open Resource →</a>` : ''}
+                <div class="flex-1 overflow-hidden">
+                    <h3 class="font-bold text-slate-900 truncate">${title || 'N/A'}</h3>
+                    <p class="text-slate-500 text-sm">${sub || ''}</p>
+                    <p class="text-slate-400 text-xs mt-1 italic">${detail || ''}</p>
+                    ${(link && link !== '#') ? `<a href="${link}" target="_blank" class="inline-block mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold shadow-sm shadow-blue-200">Open Resource</a>` : ''}
                 </div>
             </div>`;
         }
@@ -104,9 +111,8 @@
             renderData(filtered);
         }
 
-        // Init
+        // Initialize
         switchTab('Books');
-        lucide.createIcons();
     </script>
 </body>
 </html>

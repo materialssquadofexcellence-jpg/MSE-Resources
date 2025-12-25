@@ -26,7 +26,7 @@
         
         <div class="mt-3 flex gap-2">
             <div class="relative flex-1">
-                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Squad..." 
+                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Resources..." 
                        class="w-full bg-slate-100 border-none rounded-xl py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                 <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-400 w-4 h-4"></i>
             </div>
@@ -39,7 +39,7 @@
     <div id="sideMenuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
     <div id="sideMenu" class="fixed top-0 left-0 h-full w-72 bg-white z-[51] menu-hidden shadow-2xl p-6 flex flex-col">
         <div class="flex justify-between items-center mb-8">
-            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE SQUAD</span>
+            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE-Resources</span>
             <button onclick="toggleMenu()"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
         </div>
         
@@ -48,8 +48,8 @@
             <button onclick="switchTab('Books')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="book-open" class="w-4 h-4"></i> Books</button>
             <button onclick="switchTab('Questions')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4"></i> Questions</button>
             <button onclick="switchTab('Notes')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4"></i> Notes</button>
-            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Faculty</button>
-            <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Squad Members</button>
+            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Teachers</button>
+            <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Students</button>
             <button onclick="switchTab('Important_Links')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3 mb-6"><i data-lucide="link" class="w-4 h-4"></i> Quick Links</button>
             
             <hr class="border-slate-100 my-4">

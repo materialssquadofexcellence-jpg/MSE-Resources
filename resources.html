@@ -3,236 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSE-Resources Pro</title>
+    <title>MSE Resources | Secured</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .menu-hidden { transform: translateX(-100%); transition: transform 0.3s ease; }
         .menu-visible { transform: translateX(0); transition: transform 0.3s ease; }
         .modal-hidden { display: none !important; }
-        body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, sans-serif; }
-        .card-active:active { transform: scale(0.98); background-color: #f8fafc; }
+        #accessDenied, #loadingScreen { position: fixed; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 pb-10">
 
-    <header class="bg-white p-5 sticky top-0 z-40 shadow-sm">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleMenu()" class="p-2 hover:bg-slate-100 rounded-lg">
-                <i data-lucide="menu" class="w-6 h-6 text-slate-700"></i>
-            </button>
-            <h1 id="pageTitle" class="text-xl font-bold text-slate-800 uppercase tracking-tight italic">Books</h1>
-        </div>
-        
-        <div class="mt-3 flex gap-2">
-            <div class="relative flex-1">
-                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Database..." 
-                       class="w-full bg-slate-100 border-none rounded-xl py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-400 w-4 h-4"></i>
-            </div>
-            <select id="searchCol" onchange="filterData()" class="bg-slate-200 border-none rounded-xl px-2 text-[10px] font-bold text-slate-600 outline-none max-w-[90px]">
-                <option value="all">ALL</option>
-            </select>
-        </div>
-    </header>
-
-    <div id="sideMenuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
-    <div id="sideMenu" class="fixed top-0 left-0 h-full w-72 bg-white z-[51] menu-hidden shadow-2xl p-6 flex flex-col">
-        <div class="flex justify-between items-center mb-8">
-            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE Resources</span>
-            <button onclick="toggleMenu()"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
-        </div>
-        
-        <nav class="space-y-1 flex-1 overflow-y-auto">
-            <p class="text-[10px] font-bold text-slate-400 mb-2 tracking-widest uppercase">Database</p>
-            <button onclick="switchTab('Books')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="book-open" class="w-4 h-4"></i> Books</button>
-            <button onclick="switchTab('Questions')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4"></i> Questions</button>
-            <button onclick="switchTab('Notes')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4"></i> Notes</button>
-            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Teachers</button>
-            <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Students</button>
-            <button onclick="switchTab('OtherResources')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="archive" class="w-4 h-4"></i> Other Resources</button>
-            <button onclick="switchTab('Important_Links')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3 mb-6"><i data-lucide="link" class="w-4 h-4"></i> Quick Links</button>
-            
-            <hr class="border-slate-100 my-4">
-            <button onclick="toggleSettings()" class="w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3 text-slate-600"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button>
-        </nav>
-
-        <div class="mt-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Cloud Sync</p>
-            <p id="lastUpdatedText" class="text-[11px] text-slate-700 font-bold mt-1 tracking-tight italic">Initializing...</p>
-        </div>
+    <div id="loadingScreen">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p class="text-slate-500 font-medium">Verifying Squad Access...</p>
     </div>
 
-    <div id="settingsModal" class="modal-hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[2rem] p-8 shadow-2xl">
-            <h2 class="text-xl font-bold mb-6 text-slate-900">Layout Settings</h2>
-            <div class="space-y-4">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Title</label><select id="mapTitle" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Subtitle</label><select id="mapSub" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Detail</label><select id="mapDetail" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
-            </div>
-            <div class="flex gap-2 mt-8">
-                <button onclick="resetToDefault()" class="flex-1 bg-slate-100 py-3 rounded-xl text-xs font-bold transition-all active:bg-red-50">RESET</button>
-                <button onclick="saveSettings()" class="flex-[2] bg-blue-600 text-white py-3 rounded-xl text-xs font-bold shadow-lg shadow-blue-100">SAVE</button>
-            </div>
+    <div id="accessDenied" class="hidden">
+        <div class="bg-red-50 p-6 rounded-full mb-6">
+            <i data-lucide="lock" class="w-12 h-12 text-red-500"></i>
         </div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Access Denied</h2>
+        <p class="text-slate-500 max-w-xs mb-8">Your email is not registered in the MSE Squad database. Please contact the admin.</p>
+        <div class="text-[10px] font-mono bg-slate-100 p-2 rounded text-slate-400" id="debugEmail"></div>
     </div>
 
-    <main id="contentList" class="p-4 space-y-3"></main>
+    <div id="mainApp" class="hidden">
+        <header class="bg-white p-5 sticky top-0 z-40 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleMenu()" class="p-2 hover:bg-slate-100 rounded-lg"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                <h1 id="pageTitle" class="text-xl font-bold text-slate-800">Books</h1>
+            </div>
+            <div class="mt-3 flex gap-2">
+                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search..." class="flex-1 bg-slate-100 rounded-xl py-3 px-4 text-sm outline-none">
+            </div>
+        </header>
+
+        <div id="sideMenuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
+        <div id="sideMenu" class="fixed top-0 left-0 h-full w-72 bg-white z-[51] menu-hidden p-6 flex flex-col">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-blue-600 font-black text-xl italic">MSE Resources</span>
+                <button onclick="toggleMenu()"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
+            </div>
+            <nav class="space-y-1 flex-1 overflow-y-auto">
+                <button onclick="switchTab('Books')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="book-open" class="w-4 h-4"></i> Books</button>
+                <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Students</button>
+                <button onclick="switchTab('OtherResources')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="archive" class="w-4 h-4"></i> Others</button>
+                </nav>
+        </div>
+
+        <main id="contentList" class="p-4 space-y-3"></main>
+    </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwb1nITHk-RoYkBGnHRrTSmhAlx9Dz585OWqqPedTRcW_65QOnGui8GoTTvT3umhv-IQw/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwzxmBAA7IKs-o3FKemN0p-VEpoWy2nLKSsvMGhBnYvZUU4v8uDYj_b6Wq_v0ZSJmQ-ug/exec"; 
         let currentData = [];
         let currentTab = 'Books';
-        
+        let userEmail = new URLSearchParams(window.location.search).get('email');
+
         const defaults = {
             'Books': { Title: 'BookName', Sub: 'Writer', Detail: 'RecommendedFor', Link: 'DriveLink' },
-            'Questions': { Title: 'Question', Sub: 'Chapter', Detail: 'Year', Link: '' },
-            'Notes': { Title: 'Chapter', Sub: 'Writer', Detail: 'Instructor', Link: 'DriveLink' },
-            'Teachers': { Title: 'Name', Sub: 'Role', Detail: 'Research', Link: 'Email' },
             'Student': { Title: 'Name', Sub: 'StudentID', Detail: 'Hometown', Link: 'FBIDLink' },
-            'OtherResources': { Title: 'Title', Sub: 'Category', Detail: 'Description', Link: 'Link' },
-            'ImportantLinks': { Title: 'Topic', Sub: 'Description', Detail: 'Link', Link: 'Link' }
+            'OtherResources': { Title: 'Title', Sub: 'Category', Detail: 'Description', Link: 'Link' }
         };
 
-        let currentMapping = JSON.parse(localStorage.getItem('mseMapping')) || JSON.parse(JSON.stringify(defaults));
+        // --- AUTHENTICATION LOGIC ---
+        async function checkAccess() {
+            if (!userEmail) {
+                showDenied("No email provided in URL.");
+                return;
+            }
 
+            try {
+                // We ask the script to check the 'Users' tab for this email
+                const response = await fetch(`${API_URL}?checkEmail=${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+
+                if (result.authorized) {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    switchTab('Books'); // Load first tab
+                } else {
+                    showDenied(userEmail);
+                }
+            } catch (e) {
+                showDenied("Server Connection Error");
+            }
+        }
+
+        function showDenied(email) {
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('accessDenied').classList.remove('hidden');
+            document.getElementById('debugEmail').innerText = `Email: ${email}`;
+            lucide.createIcons();
+        }
+
+        // --- DATA FETCHING (Modified to include email for security) ---
+        async function switchTab(tabName) {
+            currentTab = tabName;
+            document.getElementById('pageTitle').innerText = tabName;
+            if(!document.getElementById('sideMenu').classList.contains('menu-hidden')) toggleMenu();
+            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 animate-pulse text-slate-400">Loading ${tabName}...</div>`;
+
+            try {
+                // Pass email with every request so the backend knows it's still an authorized user
+                const response = await fetch(`${API_URL}?tab=${tabName}&email=${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+                currentData = result.data;
+                renderData(currentData);
+            } catch (e) {
+                document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-red-400">Error loading data.</div>`;
+            }
+        }
+
+        // --- SIDEBAR & RENDER LOGIC (Same as before) ---
         function toggleMenu() {
             document.getElementById('sideMenu').classList.toggle('menu-hidden');
             document.getElementById('sideMenu').classList.toggle('menu-visible');
             document.getElementById('sideMenuOverlay').classList.toggle('hidden');
         }
 
-        function toggleSettings() {
-            if(document.getElementById('sideMenu').classList.contains('menu-visible')) toggleMenu();
-            document.getElementById('settingsModal').classList.toggle('modal-hidden');
-            if(!document.getElementById('settingsModal').classList.contains('modal-hidden')) updateSettingsDropdowns();
-        }
-
-        async function switchTab(tabName) {
-            currentTab = tabName;
-            document.getElementById('pageTitle').innerText = tabName.replace('_', ' ');
-            if(document.getElementById('sideMenu').classList.contains('menu-visible')) toggleMenu();
-            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-slate-400 animate-pulse">Syncing Database...</div>`;
-
-            try {
-                const response = await fetch(`${API_URL}?tab=${tabName}&t=${Date.now()}`);
-                const result = await response.json();
-                document.getElementById('lastUpdatedText').innerText = result.lastUpdated;
-                currentData = result.data;
-                updateSearchDropdown();
-                renderData(currentData);
-            } catch (e) {
-                document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-red-400">Sync Error. Check URL.</div>`;
-            }
-        }
-
-        function updateSearchDropdown() {
-            if(!currentData.length) return;
-            const cols = Object.keys(currentData[0]);
-            document.getElementById('searchCol').innerHTML = '<option value="all">ALL</option>' + 
-                cols.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
-
-        function updateSettingsDropdowns() {
-            if(!currentData.length) return;
-            const cols = Object.keys(currentData[0]);
-            ['mapTitle', 'mapSub', 'mapDetail'].forEach(id => {
-                const select = document.getElementById(id);
-                select.innerHTML = cols.map(c => `<option value="${c}">${c}</option>`).join('');
-            });
-            document.getElementById('mapTitle').value = currentMapping[currentTab].Title;
-            document.getElementById('mapSub').value = currentMapping[currentTab].Sub;
-            document.getElementById('mapDetail').value = currentMapping[currentTab].Detail;
-        }
-
-        function saveSettings() {
-            currentMapping[currentTab].Title = document.getElementById('mapTitle').value;
-            currentMapping[currentTab].Sub = document.getElementById('mapSub').value;
-            currentMapping[currentTab].Detail = document.getElementById('mapDetail').value;
-            localStorage.setItem('mseMapping', JSON.stringify(currentMapping));
-            renderData(currentData);
-            toggleSettings();
-        }
-
-        function resetToDefault() {
-            currentMapping[currentTab] = JSON.parse(JSON.stringify(defaults[currentTab]));
-            localStorage.setItem('mseMapping', JSON.stringify(currentMapping));
-            renderData(currentData);
-            toggleSettings();
-        }
-
         function renderData(data) {
             const list = document.getElementById('contentList');
-            const map = currentMapping[currentTab];
-            if(!data.length) { list.innerHTML = `<div class="p-20 text-center text-slate-400 italic">No entries in this tab.</div>`; return; }
+            const map = defaults[currentTab] || {Title: 'Title', Sub: 'Sub', Detail: 'Detail', Link: 'Link'};
             
-            list.innerHTML = data.map((item, index) => {
-                const link = item[map.Link] || "";
-                const shareText = Object.entries(item).map(([k, v]) => `*${k}:* ${v}`).join('\n');
-                const encodedShareText = encodeURIComponent(`*MSE DATABASE SHARE*\n\n${shareText}`);
-
-                const extras = Object.entries(item)
-                    .filter(([k]) => k !== map.Title && k !== map.Sub && k !== map.Link)
-                    .map(([k, v]) => `<div class="flex justify-between border-b border-slate-100 py-2 last:border-0 items-center"><span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${k}</span><span class="text-xs text-slate-700 font-medium text-right ml-4">${v || '-'}</span></div>`).join('');
-
-                // Category Icons
-                let icon = 'file-text';
-                if(currentTab === 'Teachers') icon = 'graduation-cap';
-                if(currentTab === 'Student') icon = 'user';
-                if(currentTab === 'OtherResources') icon = 'archive';
-                if(currentTab === 'Important_Links') icon = 'link';
-
-                return `
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div onclick="toggleExpand(${index})" class="p-5 flex items-start gap-4 cursor-pointer card-active transition-all">
-                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="${icon}"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-900 truncate text-sm uppercase">${item[map.Title] || '---'}</h3>
-                            <p class="text-slate-500 text-xs truncate">${item[map.Sub] || ''}</p>
-                            <div class="flex items-center gap-1 mt-2 text-blue-500 font-bold text-[8px] tracking-widest uppercase">
-                                <span>Details</span> <i data-lucide="chevron-down" id="icon-${index}" class="w-3 h-3 transition-transform"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="details-${index}" class="hidden bg-slate-50/50 px-5 pb-5 border-t border-slate-50">
-                        <div class="py-2">${extras}</div>
-                        <div class="grid grid-cols-2 gap-2 mt-3">
-                            <button onclick="copyToClipboard(\`${shareText.replace(/\*/g,'')}\`, this)" class="bg-white border text-[10px] font-bold p-3 rounded-xl flex items-center justify-center gap-2">COPY</button>
-                            <a href="https://api.whatsapp.com/send?text=${encodedShareText}" target="_blank" class="bg-green-500 text-white text-[10px] font-bold p-3 rounded-xl flex items-center justify-center gap-2">WHATSAPP</a>
-                            ${link ? `<a href="${link}" target="_blank" class="col-span-2 bg-blue-600 text-white text-center p-3 rounded-xl text-[10px] font-bold shadow-md shadow-blue-50 uppercase">${currentTab === 'Student' ? 'VIEW PROFILE' : 'OPEN LINK'}</a>` : ''}
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
+            list.innerHTML = data.map((item, index) => `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <h3 class="font-bold text-slate-900">${item[map.Title] || '---'}</h3>
+                    <p class="text-slate-500 text-xs">${item[map.Sub] || ''}</p>
+                    <p class="text-blue-600 text-[10px] mt-2 font-bold uppercase">${item[map.Detail] || ''}</p>
+                </div>
+            `).join('');
             lucide.createIcons();
         }
 
-        function toggleExpand(idx) {
-            const d = document.getElementById(`details-${idx}`);
-            const i = document.getElementById(`icon-${idx}`);
-            if(d.classList.contains('hidden')) { d.classList.remove('hidden'); i.style.transform="rotate(180deg)"; }
-            else { d.classList.add('hidden'); i.style.transform="rotate(0deg)"; }
-        }
-
-        function copyToClipboard(txt, btn) {
-            navigator.clipboard.writeText(txt).then(() => {
-                const old = btn.innerHTML; btn.innerText = "COPIED!";
-                setTimeout(() => { btn.innerHTML = old; lucide.createIcons(); }, 1500);
-            });
-        }
-
-        function filterData() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const col = document.getElementById('searchCol').value;
-            const filtered = currentData.filter(item => {
-                if (col === "all") return Object.values(item).some(v => String(v).toLowerCase().includes(q));
-                return String(item[col]).toLowerCase().includes(q);
-            });
-            renderData(filtered);
-        }
-
-        switchTab('Books');
+        // Run check on load
+        checkAccess();
     </script>
 </body>
 </html>

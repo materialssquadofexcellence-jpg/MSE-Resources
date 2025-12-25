@@ -21,12 +21,12 @@
             <button onclick="toggleMenu()" class="p-2 hover:bg-slate-100 rounded-lg">
                 <i data-lucide="menu" class="w-6 h-6 text-slate-700"></i>
             </button>
-            <h1 id="pageTitle" class="text-xl font-bold text-slate-800 uppercase tracking-tight italic">Books</h1>
+            <h1 id="pageTitle" class="text-xl font-bold text-slate-800 uppercase italic">Books</h1>
         </div>
         
         <div class="mt-3 flex gap-2">
             <div class="relative flex-1">
-                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Database..." 
+                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search squad database..." 
                        class="w-full bg-slate-100 border-none rounded-xl py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                 <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-400 w-4 h-4"></i>
             </div>
@@ -39,19 +39,16 @@
     <div id="sideMenuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
     <div id="sideMenu" class="fixed top-0 left-0 h-full w-72 bg-white z-[51] menu-hidden shadow-2xl p-6 flex flex-col">
         <div class="flex justify-between items-center mb-8">
-            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE Resources</span>
+            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE SQUAD</span>
             <button onclick="toggleMenu()"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
         </div>
         
         <nav class="space-y-1 flex-1 overflow-y-auto">
             <p class="text-[10px] font-bold text-slate-400 mb-2 tracking-widest uppercase">Database</p>
             <button onclick="switchTab('Books')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="book-open" class="w-4 h-4"></i> Books</button>
-            <button onclick="switchTab('Questions')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4"></i> Questions</button>
-            <button onclick="switchTab('Notes')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4"></i> Notes</button>
-            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Teachers</button>
             <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Students</button>
             <button onclick="switchTab('OtherResources')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="archive" class="w-4 h-4"></i> Other Resources</button>
-            <button onclick="switchTab('Important_Links')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3 mb-6"><i data-lucide="link" class="w-4 h-4"></i> Quick Links</button>
+            <button onclick="switchTab('Important_Links')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3 mb-6"><i data-lucide="link" class="w-4 h-4"></i> Links</button>
             
             <hr class="border-slate-100 my-4">
             <button onclick="toggleSettings()" class="w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3 text-slate-600"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button>
@@ -67,9 +64,9 @@
         <div class="bg-white w-full max-w-sm rounded-[2rem] p-8 shadow-2xl">
             <h2 class="text-xl font-bold mb-6 text-slate-900">Layout Settings</h2>
             <div class="space-y-4">
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Title</label><select id="mapTitle" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Subtitle</label><select id="mapSub" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Detail</label><select id="mapDetail" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none focus:ring-2 focus:ring-blue-500"></select></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Title</label><select id="mapTitle" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none"></select></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Subtitle</label><select id="mapSub" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none"></select></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Detail</label><select id="mapDetail" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm outline-none"></select></div>
             </div>
             <div class="flex gap-2 mt-8">
                 <button onclick="resetToDefault()" class="flex-1 bg-slate-100 py-3 rounded-xl text-xs font-bold transition-all active:bg-red-50">RESET</button>
@@ -81,15 +78,12 @@
     <main id="contentList" class="p-4 space-y-3"></main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwtZ-khGsU40_Pn4ouAoYllvgP-y6khC9inI2ShvbtUK_Ztpd2pCLuwUqjMeCThlXdYdw/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbyUZrj8A465jnIt5pAcCoSLmnVSqdlUsSu7JRVLu14xE7hTMXTjLMFrZFCc8n0SElZNxQ/exec"; 
         let currentData = [];
         let currentTab = 'Books';
         
         const defaults = {
             'Books': { Title: 'BookName', Sub: 'Writer', Detail: 'RecommendedFor', Link: 'DriveLink' },
-            'Questions': { Title: 'Question', Sub: 'Chapter', Detail: 'Year', Link: '' },
-            'Notes': { Title: 'Chapter', Sub: 'Writer', Detail: 'Instructor', Link: 'DriveLink' },
-            'Teachers': { Title: 'Name', Sub: 'Role', Detail: 'Research', Link: 'Email' },
             'Student': { Title: 'Name', Sub: 'StudentID', Detail: 'Hometown', Link: 'FBIDLink' },
             'OtherResources': { Title: 'Title', Sub: 'Category', Detail: 'Description', Link: 'Link' },
             'Important_Links': { Title: 'Topic', Sub: 'Description', Detail: 'Link', Link: 'Link' }
@@ -113,7 +107,7 @@
             currentTab = tabName;
             document.getElementById('pageTitle').innerText = tabName.replace('_', ' ');
             if(document.getElementById('sideMenu').classList.contains('menu-visible')) toggleMenu();
-            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-slate-400 animate-pulse">Syncing Database...</div>`;
+            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-slate-400 animate-pulse">Syncing Cloud...</div>`;
 
             try {
                 const response = await fetch(`${API_URL}?tab=${tabName}&t=${Date.now()}`);
@@ -127,45 +121,10 @@
             }
         }
 
-        function updateSearchDropdown() {
-            if(!currentData.length) return;
-            const cols = Object.keys(currentData[0]);
-            document.getElementById('searchCol').innerHTML = '<option value="all">ALL</option>' + 
-                cols.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
-
-        function updateSettingsDropdowns() {
-            if(!currentData.length) return;
-            const cols = Object.keys(currentData[0]);
-            ['mapTitle', 'mapSub', 'mapDetail'].forEach(id => {
-                const select = document.getElementById(id);
-                select.innerHTML = cols.map(c => `<option value="${c}">${c}</option>`).join('');
-            });
-            document.getElementById('mapTitle').value = currentMapping[currentTab].Title;
-            document.getElementById('mapSub').value = currentMapping[currentTab].Sub;
-            document.getElementById('mapDetail').value = currentMapping[currentTab].Detail;
-        }
-
-        function saveSettings() {
-            currentMapping[currentTab].Title = document.getElementById('mapTitle').value;
-            currentMapping[currentTab].Sub = document.getElementById('mapSub').value;
-            currentMapping[currentTab].Detail = document.getElementById('mapDetail').value;
-            localStorage.setItem('mseMapping', JSON.stringify(currentMapping));
-            renderData(currentData);
-            toggleSettings();
-        }
-
-        function resetToDefault() {
-            currentMapping[currentTab] = JSON.parse(JSON.stringify(defaults[currentTab]));
-            localStorage.setItem('mseMapping', JSON.stringify(currentMapping));
-            renderData(currentData);
-            toggleSettings();
-        }
-
         function renderData(data) {
             const list = document.getElementById('contentList');
             const map = currentMapping[currentTab];
-            if(!data.length) { list.innerHTML = `<div class="p-20 text-center text-slate-400 italic">No entries in this tab.</div>`; return; }
+            if(!data.length) { list.innerHTML = `<div class="p-20 text-center text-slate-400 italic">No entries found.</div>`; return; }
             
             list.innerHTML = data.map((item, index) => {
                 const link = item[map.Link] || "";
@@ -174,19 +133,16 @@
 
                 const extras = Object.entries(item)
                     .filter(([k]) => k !== map.Title && k !== map.Sub && k !== map.Link)
-                    .map(([k, v]) => `<div class="flex justify-between border-b border-slate-100 py-2 last:border-0 items-center"><span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${k}</span><span class="text-xs text-slate-700 font-medium text-right ml-4">${v || '-'}</span></div>`).join('');
-
-                // Category Icons
-                let icon = 'file-text';
-                if(currentTab === 'Teachers') icon = 'graduation-cap';
-                if(currentTab === 'Student') icon = 'user';
-                if(currentTab === 'OtherResources') icon = 'archive';
-                if(currentTab === 'Important_Links') icon = 'link';
+                    .map(([k, v]) => `
+                        <div class="flex justify-between border-b border-slate-100 py-2 last:border-0 items-center">
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${k}</span>
+                            <span class="text-xs text-slate-700 font-medium text-right ml-4">${v || '-'}</span>
+                        </div>`).join('');
 
                 return `
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div onclick="toggleExpand(${index})" class="p-5 flex items-start gap-4 cursor-pointer card-active transition-all">
-                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="${icon}"></i></div>
+                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="${currentTab==='Student'?'user':'file-text'}"></i></div>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-bold text-slate-900 truncate text-sm uppercase">${item[map.Title] || '---'}</h3>
                             <p class="text-slate-500 text-xs truncate">${item[map.Sub] || ''}</p>
@@ -215,22 +171,12 @@
             else { d.classList.add('hidden'); i.style.transform="rotate(0deg)"; }
         }
 
-        function copyToClipboard(txt, btn) {
-            navigator.clipboard.writeText(txt).then(() => {
-                const old = btn.innerHTML; btn.innerText = "COPIED!";
-                setTimeout(() => { btn.innerHTML = old; lucide.createIcons(); }, 1500);
-            });
-        }
-
-        function filterData() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const col = document.getElementById('searchCol').value;
-            const filtered = currentData.filter(item => {
-                if (col === "all") return Object.values(item).some(v => String(v).toLowerCase().includes(q));
-                return String(item[col]).toLowerCase().includes(q);
-            });
-            renderData(filtered);
-        }
+        function updateSearchDropdown() { if(!currentData.length) return; const cols = Object.keys(currentData[0]); document.getElementById('searchCol').innerHTML = '<option value="all">ALL</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join(''); }
+        function updateSettingsDropdowns() { if(!currentData.length) return; const cols = Object.keys(currentData[0]); ['mapTitle', 'mapSub', 'mapDetail'].forEach(id => { const select = document.getElementById(id); select.innerHTML = cols.map(c => `<option value="${c}">${c}</option>`).join(''); }); document.getElementById('mapTitle').value = currentMapping[currentTab].Title; document.getElementById('mapSub').value = currentMapping[currentTab].Sub; document.getElementById('mapDetail').value = currentMapping[currentTab].Detail; }
+        function saveSettings() { currentMapping[currentTab].Title = document.getElementById('mapTitle').value; currentMapping[currentTab].Sub = document.getElementById('mapSub').value; currentMapping[currentTab].Detail = document.getElementById('mapDetail').value; localStorage.setItem('mseMapping', JSON.stringify(currentMapping)); renderData(currentData); toggleSettings(); }
+        function resetToDefault() { currentMapping[currentTab] = JSON.parse(JSON.stringify(defaults[currentTab])); localStorage.setItem('mseMapping', JSON.stringify(currentMapping)); renderData(currentData); toggleSettings(); }
+        function copyToClipboard(txt, btn) { navigator.clipboard.writeText(txt).then(() => { const old = btn.innerHTML; btn.innerText = "COPIED!"; setTimeout(() => { btn.innerHTML = old; lucide.createIcons(); }, 1500); }); }
+        function filterData() { const q = document.getElementById('searchInput').value.toLowerCase(); const col = document.getElementById('searchCol').value; const filtered = currentData.filter(item => { if (col === "all") return Object.values(item).some(v => String(v).toLowerCase().includes(q)); return String(item[col]).toLowerCase().includes(q); }); renderData(filtered); }
 
         switchTab('Books');
     </script>

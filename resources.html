@@ -26,7 +26,7 @@
         
         <div class="mt-3 flex gap-2">
             <div class="relative flex-1">
-                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Resources..." 
+                <input type="text" id="searchInput" oninput="filterData()" placeholder="Search Database..." 
                        class="w-full bg-slate-100 border-none rounded-xl py-3 px-10 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                 <i data-lucide="search" class="absolute left-3 top-3.5 text-slate-400 w-4 h-4"></i>
             </div>
@@ -39,7 +39,7 @@
     <div id="sideMenuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
     <div id="sideMenu" class="fixed top-0 left-0 h-full w-72 bg-white z-[51] menu-hidden shadow-2xl p-6 flex flex-col">
         <div class="flex justify-between items-center mb-8">
-            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE-Resources</span>
+            <span class="text-blue-600 font-black text-xl tracking-tighter italic">MSE SQUAD</span>
             <button onclick="toggleMenu()"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
         </div>
         
@@ -48,8 +48,9 @@
             <button onclick="switchTab('Books')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="book-open" class="w-4 h-4"></i> Books</button>
             <button onclick="switchTab('Questions')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="help-circle" class="w-4 h-4"></i> Questions</button>
             <button onclick="switchTab('Notes')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="file-text" class="w-4 h-4"></i> Notes</button>
-            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Teachers</button>
-            <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Students</button>
+            <button onclick="switchTab('Teachers')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Faculty</button>
+            <button onclick="switchTab('Student')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Squad Members</button>
+            <button onclick="switchTab('OtherResources')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3"><i data-lucide="archive" class="w-4 h-4"></i> Other Resources</button>
             <button onclick="switchTab('Important_Links')" class="w-full text-left p-3 rounded-xl hover:bg-blue-50 flex items-center gap-3 mb-6"><i data-lucide="link" class="w-4 h-4"></i> Quick Links</button>
             
             <hr class="border-slate-100 my-4">
@@ -80,7 +81,7 @@
     <main id="contentList" class="p-4 space-y-3"></main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxFk5MrUaTCcznoZfR2iCeBjtOFfEAz9S0uYRjy8g5C57AMmCLoOelkD1YJusySY-ndLA/exec"; // <--- PASTE YOUR GOOGLE SCRIPT URL HERE
+        const API_URL = "https://script.google.com/macros/s/AKfycbwb1nITHk-RoYkBGnHRrTSmhAlx9Dz585OWqqPedTRcW_65QOnGui8GoTTvT3umhv-IQw/exec"; 
         let currentData = [];
         let currentTab = 'Books';
         
@@ -90,7 +91,8 @@
             'Notes': { Title: 'Chapter', Sub: 'Writer', Detail: 'Instructor', Link: 'DriveLink' },
             'Teachers': { Title: 'Name', Sub: 'Role', Detail: 'Research', Link: 'Email' },
             'Student': { Title: 'Name', Sub: 'StudentID', Detail: 'Hometown', Link: 'FBIDLink' },
-            'Important_Links': { Title: 'Topic', Sub: 'Description', Detail: 'Link', Link: 'Link' }
+            'OtherResources': { Title: 'Title', Sub: 'Category', Detail: 'Description', Link: 'Link' },
+            'ImportantLinks': { Title: 'Topic', Sub: 'Description', Detail: 'Link', Link: 'Link' }
         };
 
         let currentMapping = JSON.parse(localStorage.getItem('mseMapping')) || JSON.parse(JSON.stringify(defaults));
@@ -111,7 +113,7 @@
             currentTab = tabName;
             document.getElementById('pageTitle').innerText = tabName.replace('_', ' ');
             if(document.getElementById('sideMenu').classList.contains('menu-visible')) toggleMenu();
-            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-slate-400 animate-pulse">Accessing Squad Database...</div>`;
+            document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-slate-400 animate-pulse">Syncing Database...</div>`;
 
             try {
                 const response = await fetch(`${API_URL}?tab=${tabName}&t=${Date.now()}`);
@@ -121,7 +123,7 @@
                 updateSearchDropdown();
                 renderData(currentData);
             } catch (e) {
-                document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-red-400">Connection Failed. Check URL.</div>`;
+                document.getElementById('contentList').innerHTML = `<div class="text-center py-20 text-red-400">Sync Error. Check URL.</div>`;
             }
         }
 
@@ -163,7 +165,7 @@
         function renderData(data) {
             const list = document.getElementById('contentList');
             const map = currentMapping[currentTab];
-            if(!data.length) { list.innerHTML = `<div class="p-20 text-center text-slate-400 italic">No entries found.</div>`; return; }
+            if(!data.length) { list.innerHTML = `<div class="p-20 text-center text-slate-400 italic">No entries in this tab.</div>`; return; }
             
             list.innerHTML = data.map((item, index) => {
                 const link = item[map.Link] || "";
@@ -172,16 +174,13 @@
 
                 const extras = Object.entries(item)
                     .filter(([k]) => k !== map.Title && k !== map.Sub && k !== map.Link)
-                    .map(([k, v]) => `
-                        <div class="flex justify-between border-b border-slate-100 py-2 last:border-0 items-center">
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${k}</span>
-                            <span class="text-xs text-slate-700 font-medium text-right ml-4">${v || '-'}</span>
-                        </div>`).join('');
+                    .map(([k, v]) => `<div class="flex justify-between border-b border-slate-100 py-2 last:border-0 items-center"><span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${k}</span><span class="text-xs text-slate-700 font-medium text-right ml-4">${v || '-'}</span></div>`).join('');
 
-                // Category Specific Icons
+                // Category Icons
                 let icon = 'file-text';
                 if(currentTab === 'Teachers') icon = 'graduation-cap';
                 if(currentTab === 'Student') icon = 'user';
+                if(currentTab === 'OtherResources') icon = 'archive';
                 if(currentTab === 'Important_Links') icon = 'link';
 
                 return `
@@ -201,11 +200,7 @@
                         <div class="grid grid-cols-2 gap-2 mt-3">
                             <button onclick="copyToClipboard(\`${shareText.replace(/\*/g,'')}\`, this)" class="bg-white border text-[10px] font-bold p-3 rounded-xl flex items-center justify-center gap-2">COPY</button>
                             <a href="https://api.whatsapp.com/send?text=${encodedShareText}" target="_blank" class="bg-green-500 text-white text-[10px] font-bold p-3 rounded-xl flex items-center justify-center gap-2">WHATSAPP</a>
-                            ${link ? `
-                                <a href="${link}" target="_blank" class="col-span-2 bg-blue-600 text-white text-center p-3 rounded-xl text-[10px] font-bold shadow-md shadow-blue-50">
-                                    ${currentTab === 'Student' ? 'VIEW PROFILE' : 'OPEN RESOURCE'}
-                                </a>` : ''
-                            }
+                            ${link ? `<a href="${link}" target="_blank" class="col-span-2 bg-blue-600 text-white text-center p-3 rounded-xl text-[10px] font-bold shadow-md shadow-blue-50 uppercase">${currentTab === 'Student' ? 'VIEW PROFILE' : 'OPEN LINK'}</a>` : ''}
                         </div>
                     </div>
                 </div>`;
